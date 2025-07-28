@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: TripStory API
+  description: API for managing travel trips and itineraries
+  version: 1.0.0
+  contact:
+    name: TripStory Team
+    email: support@tripstory.com
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: http://backend:8080
+    description: Docker container server
+
+paths:
+  /api/trips:
+    get:
+      summary: Get all trips
+      description: Retrieve a list of all trips for the authenticated user
+      tags:
+        - Trips
+      responses:
+        '200':
+          description: Successfully retrieved trips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trip'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Create a new trip
+      description: Create a new trip with the provided details
+      tags:
+        - Trips
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTripRequest'
+      responses:
+        '201':
+          description: Trip created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/trips/{tripId}:
+    get:
+      summary: Get trip by ID
+      description: Retrieve a specific trip by its ID
+      tags:
+        - Trips
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          description: The ID of the trip to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Trip found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '404':
+          description: Trip not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update trip
+      description: Update an existing trip with new details
+      tags:
+        - Trips
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          description: The ID of the trip to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTripRequest'
+      responses:
+        '200':
+          description: Trip updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Trip not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete trip
+      description: Delete a trip by its ID
+      tags:
+        - Trips
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          description: The ID of the trip to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Trip deleted successfully
+        '404':
+          description: Trip not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Trip:
+      type: object
+      required:
+        - id
+        - title
+        - startDate
+        - endDate
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the trip
+          example: 1
+        title:
+          type: string
+          description: Title of the trip
+          example: "Summer Vacation in Paris"
+          maxLength: 255
+        startDate:
+          type: string
+          format: date
+          description: Start date of the trip
+          example: "2024-08-12"
+        endDate:
+          type: string
+          format: date
+          description: End date of the trip
+          example: "2024-08-15"
+        notes:
+          type: string
+          description: Additional notes about the trip
+          example: "Don't forget to visit the Eiffel Tower!"
+          maxLength: 1000
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the trip was created
+          example: "2024-01-15T10:30:00Z"
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the trip was last updated
+          example: "2024-01-15T10:30:00Z"
+          readOnly: true
+
+    CreateTripRequest:
+      type: object
+      required:
+        - title
+        - startDate
+        - endDate
+      properties:
+        title:
+          type: string
+          description: Title of the trip
+          example: "Summer Vacation in Paris"
+          maxLength: 255
+        startDate:
+          type: string
+          format: date
+          description: Start date of the trip
+          example: "2024-08-12"
+        endDate:
+          type: string
+          format: date
+          description: End date of the trip
+          example: "2024-08-15"
+        notes:
+          type: string
+          description: Additional notes about the trip
+          example: "Don't forget to visit the Eiffel Tower!"
+          maxLength: 1000
+
+    UpdateTripRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the trip
+          example: "Updated Summer Vacation in Paris"
+          maxLength: 255
+        startDate:
+          type: string
+          format: date
+          description: Start date of the trip
+          example: "2024-08-12"
+        endDate:
+          type: string
+          format: date
+          description: End date of the trip
+          example: "2024-08-15"
+        notes:
+          type: string
+          description: Additional notes about the trip
+          example: "Updated notes about the trip"
+          maxLength: 1000
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+        - timestamp
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: "Trip not found"
+        details:
+          type: string
+          description: Additional error details
+          example: "Trip with ID 123 does not exist"
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the error occurred
+          example: "2024-01-15T10:30:00Z"
+        path:
+          type: string
+          description: API path where the error occurred
+          example: "/api/trips/123"

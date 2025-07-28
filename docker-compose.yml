@@ -1,0 +1,71 @@
+# Docker Compose configuration for TripStory Full Stack Application
+# This orchestrates both the Flutter frontend and Spring Boot backend
+
+services:
+  # Backend Service - Spring Boot API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tripstory-backend
+    ports:
+      - "8080:8080"  # Map host port 8080 to container port 8080
+    environment:
+      # Spring Boot configuration
+      - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-Xmx512m -Xms256m
+      # Database configuration (using H2 in-memory for simplicity)
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:tripstory
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=password
+    networks:
+      - tripstory-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "com.tripstory.service=backend"
+      - "com.tripstory.version=1.0.0"
+
+  # Frontend Service - Flutter Web with Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tripstory-frontend
+    ports:
+      - "80:80"      # Map host port 80 to container port 80
+    environment:
+      # Backend API endpoint (container-to-container communication)
+      - API_BASE_URL=http://backend:8080
+    depends_on:
+      backend:
+        condition: service_healthy  # Wait for backend to be healthy
+    networks:
+      - tripstory-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.tripstory.service=frontend"
+      - "com.tripstory.version=1.0.0"
+
+# Networks
+networks:
+  tripstory-network:
+    driver: bridge
+    name: tripstory-network
+
+# Volumes (for potential future use with persistent database)
+volumes:
+  tripstory-data:
+    driver: local
+    name: tripstory-data

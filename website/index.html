@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripStory - Plan Your Perfect Adventure</title>
+    <meta name="description" content="TripStory helps you plan, organize, and share your travel adventures with friends. Create trips, pack smart, and capture memories.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tripstory.app/">
+    <meta property="og:title" content="TripStory - Plan Your Perfect Adventure">
+    <meta property="og:description" content="Plan, organize, and share your travel adventures with friends.">
+    <meta property="og:image" content="./images/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://tripstory.app/">
+    <meta property="twitter:title" content="TripStory - Plan Your Perfect Adventure">
+    <meta property="twitter:description" content="Plan, organize, and share your travel adventures with friends.">
+    <meta property="twitter:image" content="./images/og-image.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #2196F3;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 150px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('./images/hero-pattern.png') repeat;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .download-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Hero Banner Placeholder */
+        .hero-banner {
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .hero-banner-placeholder {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .placeholder-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: #f8fafc;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1a202c;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+
+        .feature-card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        /* App Preview Section */
+        .app-preview {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .preview-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .preview-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #1a202c;
+        }
+
+        .preview-text p {
+            font-size: 1.1rem;
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        .preview-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .preview-features li {
+            padding: 0.5rem 0;
+            color: #4a5568;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .preview-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .app-mockup-placeholder {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px dashed #cbd5e0;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Download Section */
+        .download-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .download-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .download-section p {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .store-button {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .store-button:hover {
+            transform: scale(1.05);
+        }
+
+        .store-button-placeholder {
+            width: 200px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a202c;
+            color: white;
+            padding: 3rem 0 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #2196F3;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: #a0aec0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #2d3748;
+            padding-top: 2rem;
+            color: #a0aec0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .preview-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-content h1 {
+            animation-delay: 0.2s;
+        }
+
+        .hero-content p {
+            animation-delay: 0.4s;
+        }
+
+        .cta-buttons {
+            animation-delay: 0.6s;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">TripStory</a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#download">Download</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Plan Your Perfect Adventure</h1>
+                <p>Create amazing trips, collaborate with friends, and never forget to pack the essentials. Your travel planning companion is here.</p>
+                
+                <div class="cta-buttons">
+                    <a href="#download" class="download-btn">
+                        📱 Get the App
+                    </a>
+                    <a href="#features" class="download-btn">
+                        ✨ Learn More
+                    </a>
+                </div>
+
+                <!-- Hero Banner Placeholder -->
+                <div class="hero-banner">
+                    <div class="hero-banner-placeholder">
+                        <div class="placeholder-text">
+                            <strong>Hero Banner Placeholder</strong><br>
+                            Perfect spot for your brand hero image<br>
+                            Recommended: 800x400px
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Everything You Need for Amazing Trips</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Smart Trip Planning</h3>
+                    <p>Create detailed itineraries with places to visit, dates, and notes. Our AI suggests the best attractions for your destination.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎒</div>
+                    <h3>Smart Packing Lists</h3>
+                    <p>Never forget essentials again. Create custom packing lists and get AI suggestions based on your destination and weather.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📸</div>
+                    <h3>Memory Gallery</h3>
+                    <p>Capture and organize your travel photos. Share memories with friends and create beautiful travel albums.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Collaborate with Friends</h3>
+                    <p>Plan group trips together. Share itineraries, split costs, and make decisions as a team with real-time collaboration.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Discover Destinations</h3>
+                    <p>Explore new places with our curated recommendations. Get insider tips and hidden gems from fellow travelers.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Offline Access</h3>
+                    <p>Access your trips even without internet. Download maps, itineraries, and important info for offline use.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Preview Section -->
+    <section class="app-preview">
+        <div class="container">
+            <div class="preview-content">
+                <div class="preview-text">
+                    <h2>Your Travel Companion in Your Pocket</h2>
+                    <p>TripStory makes travel planning effortless and fun. From the first idea to the last memory, we're with you every step of the journey.</p>
+                    
+                    <ul class="preview-features">
+                        <li>Beautiful, intuitive interface</li>
+                        <li>Real-time synchronization across devices</li>
+                        <li>Secure cloud backup</li>
+                        <li>Works on iOS, Android, and Web</li>
+                        <li>Regular updates with new features</li>
+                    </ul>
+                    
+                    <div class="cta-buttons">
+                        <a href="#download" class="download-btn" style="background: #2196F3; border-color: #2196F3;">
+                            🚀 Download Now
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="app-mockup-placeholder">
+                    <div class="placeholder-text" style="color: #718096;">
+                        <strong>App Screenshots Placeholder</strong><br>
+                        Perfect for iPhone/Android mockups<br>
+                        Recommended: 500x600px each
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download-section" id="download">
+        <div class="container">
+            <h2>Ready to Start Your Adventure?</h2>
+            <p>Download TripStory now and join millions of travelers planning their perfect trips.</p>
+            
+            <div class="download-buttons">
+                <a href="#" class="store-button">
+                    <div class="store-button-placeholder">
+                        🍎 App Store<br>
+                        <small>Download for iOS</small>
+                    </div>
+                </a>
+                
+                <a href="#" class="store-button">
+                    <div class="store-button-placeholder">
+                        🤖 Play Store<br>
+                        <small>Download for Android</small>
+                    </div>
+                </a>
+                
+                <a href="#" class="store-button">
+                    <div class="store-button-placeholder">
+                        🌐 Web App<br>
+                        <small>Use in Browser</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TripStory</h3>
+                    <p>Making travel planning simple and fun for everyone.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Product</h3>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Updates</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <ul>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Facebook</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 TripStory. All rights reserved. Built with ❤️ for travelers.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

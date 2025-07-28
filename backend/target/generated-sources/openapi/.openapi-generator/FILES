@@ -1,0 +1,8 @@
+README.md
+pom.xml
+src/gen/java/main/com/tripstory/api/ApiUtil.java
+src/gen/java/main/com/tripstory/api/TripsApi.java
+src/gen/java/main/com/tripstory/model/CreateTripRequest.java
+src/gen/java/main/com/tripstory/model/ErrorResponse.java
+src/gen/java/main/com/tripstory/model/Trip.java
+src/gen/java/main/com/tripstory/model/UpdateTripRequest.java

@@ -1,0 +1,16 @@
+com/tripstory/api/TripsApi.class
+com/tripstory/TripStoryApplication.class
+com/tripstory/repository/TripRepository.class
+com/tripstory/model/ErrorResponse.class
+com/tripstory/exception/GlobalExceptionHandler$ErrorResponse.class
+com/tripstory/exception/GlobalExceptionHandler.class
+com/tripstory/model/CreateTripRequest.class
+com/tripstory/model/UpdateTripRequest.class
+com/tripstory/service/TripService$TripStatistics.class
+com/tripstory/api/ApiUtil.class
+com/tripstory/model/Trip.class
+com/tripstory/service/TripService.class
+com/tripstory/entity/Trip.class
+com/tripstory/controller/TripController.class
+com/tripstory/exception/TripNotFoundException.class
+com/tripstory/config/CorsConfig.class
