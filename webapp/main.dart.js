@@ -26706,7 +26706,7 @@ var $async$x5=A.H(function(e,f){if(e===1)return A.I(f,r)
 while(true)switch(s){case 0:s=3
 return A.M(A.Ze(),$async$x5)
 case 3:n=f
-A.dr("Making "+a+" request to: https://tripstory-backend-773214792553.us-central1.run.app/api"+b)
+A.dr("Making "+a+" request to: https://tripstory-backend-425476392775.us-central1.run.app/api"+b)
 p=n!=null
 A.dr("ID Token present: "+p)
 if(p){A.dr("Token length: "+n.length)
@@ -26719,7 +26719,7 @@ p=o.$ti.i("bf<1>")
 p=A.Z(new A.bf(o,p),p.i("v.E"))
 A.dr("Request headers: "+A.j(p))
 s=4
-return A.M(A.rp(a,A.i3("https://tripstory-backend-773214792553.us-central1.run.app/api"+b),c,o),$async$x5)
+return A.M(A.rp(a,A.i3("https://tripstory-backend-425476392775.us-central1.run.app/api"+b),c,o),$async$x5)
 case 4:q=f
 s=1
 break
