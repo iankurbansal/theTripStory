@@ -1,10 +1,6 @@
 [build]
-builder = "NIXPACKS"
-buildCommand = "cd backend && mvn clean package -DskipTests"
-
-[build.env]
-NIXPACKS_JAVA_VERSION = "17"
-NIXPACKS_INSTALL_PHASE = "apt-get update && apt-get install -y maven"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "cd backend && java -jar target/*.jar"
+startCommand = "java -jar /app/app.jar"
