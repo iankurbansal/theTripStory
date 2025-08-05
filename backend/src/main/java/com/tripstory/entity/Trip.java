@@ -10,6 +10,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,6 +46,10 @@ public class Trip {
     @Column(length = 1000)
     private String notes;
 
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OrderBy("orderIndex ASC")
+    private List<Destination> destinations = new ArrayList<>();
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -61,6 +67,7 @@ public class Trip {
         this.startDate = startDate;
         this.endDate = endDate;
         this.notes = notes;
+        this.destinations = new ArrayList<>();
     }
 
     // Getters and Setters
@@ -120,6 +127,20 @@ public class Trip {
         this.updatedAt = updatedAt;
     }
 
+    public List<Destination> getDestinations() {
+        return destinations;
+    }
+
+    public void setDestinations(List<Destination> destinations) {
+        this.destinations = destinations;
+        // Ensure bidirectional relationship
+        if (destinations != null) {
+            for (Destination destination : destinations) {
+                destination.setTrip(this);
+            }
+        }
+    }
+
     // Business logic methods
     
     /**
@@ -149,6 +170,49 @@ public class Trip {
         if (other.getNotes() != null) {
             this.notes = other.getNotes();
         }
+    }
+
+    /**
+     * Helper methods for managing destinations
+     */
+    public void addDestination(Destination destination) {
+        destinations.add(destination);
+        destination.setTrip(this);
+        // Set order index if not already set
+        if (destination.getOrderIndex() == null) {
+            destination.setOrderIndex(destinations.size() - 1);
+        }
+    }
+
+    public void removeDestination(Destination destination) {
+        destinations.remove(destination);
+        destination.setTrip(null);
+    }
+
+    public void clearDestinations() {
+        for (Destination destination : destinations) {
+            destination.setTrip(null);
+        }
+        destinations.clear();
+    }
+
+    /**
+     * Get a summary of destinations for display purposes
+     */
+    public String getDestinationSummary() {
+        if (destinations.isEmpty()) {
+            return "No destinations";
+        }
+        if (destinations.size() == 1) {
+            return destinations.get(0).getName();
+        }
+        if (destinations.size() <= 3) {
+            return destinations.stream()
+                    .map(Destination::getName)
+                    .reduce((a, b) -> a + ", " + b)
+                    .orElse("No destinations");
+        }
+        return destinations.get(0).getName() + " + " + (destinations.size() - 1) + " more";
     }
 
     // equals and hashCode
