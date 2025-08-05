@@ -25,6 +25,7 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
   List<DestinationSuggestion> _suggestions = [];
   bool _isLoading = false;
   bool _showSuggestions = false;
+  bool _isSelectingFromSuggestion = false;
   Timer? _debounceTimer;
 
   @override
@@ -46,6 +47,11 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
   }
 
   void _onTextChanged() {
+    // Don't trigger search if we're programmatically setting text from suggestion selection
+    if (_isSelectingFromSuggestion) {
+      return;
+    }
+    
     final query = _controller.text.trim();
     
     // Cancel previous debounce timer
@@ -121,6 +127,9 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
   }
 
   void _onSuggestionTapped(DestinationSuggestion suggestion) {
+    // Set flag to prevent text change listener from triggering search
+    _isSelectingFromSuggestion = true;
+    
     // Cancel any pending debounce timer to prevent search refresh
     _debounceTimer?.cancel();
     
@@ -135,6 +144,11 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
     
     // Remove focus to prevent keyboard from staying open
     _focusNode.unfocus();
+    
+    // Reset the flag after a brief delay
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _isSelectingFromSuggestion = false;
+    });
     
     // Notify parent with selected suggestion
     widget.onDestinationSelected(suggestion);
