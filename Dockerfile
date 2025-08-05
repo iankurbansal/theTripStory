@@ -8,8 +8,8 @@ WORKDIR /app
 COPY backend/pom.xml backend/api-spec.yaml ./
 COPY backend/src ./src
 
-# Build the application
-RUN mvn clean package -DskipTests
+# Build the application with verbose output
+RUN mvn clean compile -DskipTests && mvn package -DskipTests
 
 # Copy the built JAR to expected location
 RUN cp target/*.jar app.jar
