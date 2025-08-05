@@ -1,11 +1,12 @@
+import 'destination.dart';
+
 class Trip {
   final int? id;
   final String title;
   final String startDate;
   final String endDate;
   final String? notes;
-  final String? destination;
-  final String? description;
+  final List<Destination> destinations;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -15,21 +16,26 @@ class Trip {
     required this.startDate,
     required this.endDate,
     this.notes,
-    this.destination,
-    this.description,
+    this.destinations = const [],
     this.createdAt,
     this.updatedAt,
   });
 
   factory Trip.fromJson(Map<String, dynamic> json) {
+    List<Destination> destinationList = [];
+    if (json['destinations'] != null) {
+      destinationList = (json['destinations'] as List)
+          .map((destinationJson) => Destination.fromJson(destinationJson))
+          .toList();
+    }
+
     return Trip(
       id: json['id'],
       title: json['title'] ?? '',
       startDate: json['startDate'] ?? '',
       endDate: json['endDate'] ?? '',
       notes: json['notes'],
-      destination: json['destination'],
-      description: json['description'],
+      destinations: destinationList,
       createdAt: json['createdAt'] != null 
           ? DateTime.parse(json['createdAt']) 
           : null,
@@ -46,8 +52,7 @@ class Trip {
       'startDate': startDate,
       'endDate': endDate,
       'notes': notes,
-      'destination': destination,
-      'description': description,
+      'destinations': destinations.map((destination) => destination.toJson()).toList(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
@@ -113,4 +118,28 @@ class Trip {
     ];
     return months[month - 1];
   }
+
+  // Helper methods for destinations
+  String get destinationSummary {
+    if (destinations.isEmpty) {
+      return 'No destinations';
+    }
+    if (destinations.length == 1) {
+      return destinations.first.name;
+    }
+    if (destinations.length <= 3) {
+      return destinations.map((d) => d.name).join(', ');
+    }
+    return '${destinations.first.name} + ${destinations.length - 1} more';
+  }
+
+  bool get hasDestinations => destinations.isNotEmpty;
+
+  int get destinationCount => destinations.length;
+
+  List<String> get destinationNames => destinations.map((d) => d.name).toList();
+
+  // Compatibility getters for backward compatibility with existing screens
+  String? get destination => destinationSummary;
+  String? get description => notes;
 }
