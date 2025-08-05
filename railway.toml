@@ -1,6 +1,5 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "cd backend && JAVA_HOME=$(dirname $(dirname $(which java))) && chmod +x mvnw && ./mvnw clean package -DskipTests"
 
 [build.env]
 NIXPACKS_JAVA_VERSION = "17"
