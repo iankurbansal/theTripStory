@@ -68,8 +68,8 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
 
   void _onFocusChanged() {
     if (!_focusNode.hasFocus) {
-      // Hide suggestions when focus is lost
-      Future.delayed(const Duration(milliseconds: 100), () {
+      // Hide suggestions when focus is lost - longer delay to allow tap to register
+      Future.delayed(const Duration(milliseconds: 200), () {
         if (mounted) {
           setState(() {
             _showSuggestions = false;
@@ -114,11 +114,18 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
   }
 
   void _onSuggestionTapped(DestinationSuggestion suggestion) {
-    _controller.text = suggestion.name;
+    // Immediately hide suggestions to prevent double-tap issues
     setState(() {
       _showSuggestions = false;
     });
+    
+    // Update text field
+    _controller.text = suggestion.fullName;
+    
+    // Remove focus
     _focusNode.unfocus();
+    
+    // Notify parent with selected suggestion
     widget.onDestinationSelected(suggestion);
   }
 
@@ -184,15 +191,44 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
               itemCount: _suggestions.length,
               itemBuilder: (context, index) {
                 final suggestion = _suggestions[index];
-                return ListTile(
-                  leading: Icon(
-                    _getIconForPlaceType(suggestion.type),
-                    color: Colors.blue,
+                return GestureDetector(
+                  onTapDown: (_) => _onSuggestionTapped(suggestion),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getIconForPlaceType(suggestion.type),
+                          color: Colors.blue,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                suggestion.name,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                suggestion.fullName,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  title: Text(suggestion.name),
-                  subtitle: Text(suggestion.fullName),
-                  onTap: () => _onSuggestionTapped(suggestion),
-                  dense: true,
                 );
               },
             ),
