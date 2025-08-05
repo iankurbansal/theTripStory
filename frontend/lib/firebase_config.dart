@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 class FirebaseConfig {
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: "AIzaSyCXGUVBaRIx5us9UH08CuJQCADofaCQZ2Q",
-    authDomain: "thetripstory.com",
+    authDomain: "tripstory-1f299.firebaseapp.com",
     projectId: "tripstory-1f299",
     storageBucket: "tripstory-1f299.firebasestorage.app",
     messagingSenderId: "425476392775",
