@@ -21,12 +21,8 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Allow requests from these origins
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-            "http://localhost:*",      // Flutter dev server
-            "http://frontend:*",       // Docker container
-            "http://127.0.0.1:*"       // Local development
-        ));
+        // Temporarily allow all origins for debugging CORS issues
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         
         // Allow these HTTP methods
         configuration.setAllowedMethods(Arrays.asList(

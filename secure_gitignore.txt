@@ -1,0 +1,64 @@
+# Security - Never commit these files
+*.env
+*.env.local
+*.env.production
+application-secrets.yml
+firebase-service-account.json
+google-services.json
+GoogleService-Info.plist
+
+# API Keys and Secrets
+**/config/secrets/
+**/credentials/
+**/.secrets/
+api-keys.txt
+secrets.properties
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backend Build
+backend/target/
+backend/build/
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+
+# Frontend Build  
+frontend/build/
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/.pub-cache/
+frontend/.pub/
+frontend/ios/Flutter/Generated.xcconfig
+frontend/ios/Flutter/flutter_export_environment.sh
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# Node modules (if using npm)
+node_modules/
+package-lock.json
+
+# Railway deployment
+.railway/

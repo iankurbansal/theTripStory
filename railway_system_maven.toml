@@ -1,0 +1,10 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "cd backend && mvn clean package -DskipTests"
+
+[deploy]
+startCommand = "cd backend && java -jar target/*.jar"
+
+[build.env]
+NIXPACKS_JAVA_VERSION = "17"
+NIXPACKS_INSTALL_PHASE = "apt-get update && apt-get install -y maven"

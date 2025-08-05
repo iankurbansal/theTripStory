@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/trip.dart';
 import '../services/api_service.dart';
+import '../services/auth_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -41,6 +42,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _refreshTrips() async {
     await _loadTrips();
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,10 +131,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(Icons.home_outlined, 'Dashboard', true), // Dashboard should be selected
-                _buildNavItem(Icons.flight, 'Trips', false),
-                _buildNavItem(Icons.photo_outlined, 'Photos', false),
-                _buildNavItem(Icons.person_outline, 'Profile', false),
+                _buildNavItem(Icons.flight, 'Trips', true, () {}), // Trips should be selected
+                _buildNavItem(Icons.photo_outlined, 'Photos', false, () {}),
+                _buildNavItem(Icons.person_outline, 'Profile', false, () => Navigator.pushNamed(context, '/profile')),
               ],
             ),
           ),
@@ -411,25 +413,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, bool isSelected) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: isSelected ? Color(0xFF2196F3) : Colors.grey.shade600,
-          size: 24,
-        ),
-        SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
+  Widget _buildNavItem(IconData icon, String label, bool isSelected, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
             color: isSelected ? Color(0xFF2196F3) : Colors.grey.shade600,
-            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+            size: 24,
           ),
-        ),
-      ],
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isSelected ? Color(0xFF2196F3) : Colors.grey.shade600,
+              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

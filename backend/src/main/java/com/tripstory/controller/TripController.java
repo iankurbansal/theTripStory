@@ -27,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/trips")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://frontend", "http://frontend:80"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:80", "http://frontend", "http://frontend:80", "https://thetripstory.com"})
 @Tag(name = "Trips", description = "Trip management operations")
 public class TripController {
 
@@ -205,5 +205,12 @@ public class TripController {
                    stats.getTotal(), stats.getUpcoming(), stats.getOngoing(), stats.getPast());
         
         return ResponseEntity.ok(stats);
+    }
+
+    @Operation(summary = "Test endpoint", description = "Test endpoint without authentication")
+    @GetMapping("/test")
+    public ResponseEntity<String> testEndpoint() {
+        logger.info("GET /api/trips/test - Test endpoint called");
+        return ResponseEntity.ok("Backend is working! Authentication is configured.");
     }
 }

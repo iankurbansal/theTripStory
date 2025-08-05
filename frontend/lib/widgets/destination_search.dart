@@ -69,13 +69,20 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
   void _onFocusChanged() {
     if (!_focusNode.hasFocus) {
       // Hide suggestions when focus is lost - longer delay to allow tap to register
-      Future.delayed(const Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 150), () {
         if (mounted) {
           setState(() {
             _showSuggestions = false;
           });
         }
       });
+    } else {
+      // When gaining focus, only show suggestions if we have text and suggestions
+      if (_controller.text.isNotEmpty && _suggestions.isNotEmpty) {
+        setState(() {
+          _showSuggestions = true;
+        });
+      }
     }
   }
 
@@ -114,15 +121,19 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
   }
 
   void _onSuggestionTapped(DestinationSuggestion suggestion) {
-    // Immediately hide suggestions to prevent double-tap issues
+    // Cancel any pending debounce timer to prevent search refresh
+    _debounceTimer?.cancel();
+    
+    // Immediately hide suggestions and update state
     setState(() {
       _showSuggestions = false;
+      _isLoading = false;
     });
     
     // Update text field
     _controller.text = suggestion.fullName;
     
-    // Remove focus
+    // Remove focus to prevent keyboard from staying open
     _focusNode.unfocus();
     
     // Notify parent with selected suggestion
@@ -191,9 +202,12 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
               itemCount: _suggestions.length,
               itemBuilder: (context, index) {
                 final suggestion = _suggestions[index];
-                return GestureDetector(
-                  onTapDown: (_) => _onSuggestionTapped(suggestion),
-                  child: Container(
+                return MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () => _onSuggestionTapped(suggestion),
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Row(
                       children: [
@@ -228,6 +242,7 @@ class _DestinationSearchWidgetState extends State<DestinationSearchWidget> {
                         ),
                       ],
                     ),
+                  ),
                   ),
                 );
               },

@@ -1,0 +1,72 @@
+# Production Configuration for Cloud Run + Supabase
+server:
+  port: ${PORT:8080}
+
+spring:
+  # Database Configuration for Supabase PostgreSQL
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/tripstory}
+    driver-class-name: ${DATABASE_DRIVER:org.postgresql.Driver}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:password}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+  
+  # JPA Configuration
+  jpa:
+    database-platform: ${DATABASE_PLATFORM:org.hibernate.dialect.PostgreSQLDialect}
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  
+  # H2 Console disabled in production
+  h2:
+    console:
+      enabled: false
+
+# CORS Configuration for production
+cors:
+  allowed-origins:
+    - ${FRONTEND_URL:https://your-frontend-domain.com}
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed-headers:
+    - "*"
+  allow-credentials: true
+
+# Logging Configuration for production
+logging:
+  level:
+    com.tripstory: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management/Actuator for Cloud Run
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      stackdriver:
+        enabled: true

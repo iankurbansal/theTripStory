@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_config.dart';
+import 'screens/auth_wrapper.dart';
+import 'screens/login_screen.dart' as screens;
 import 'screens/create_account_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/trip_details_screen.dart';
 import 'screens/create_trip_screen.dart';
 import 'screens/destinations_screen.dart';
+import 'screens/profile_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: FirebaseConfig.web);
   runApp(MyApp());
 }
 
@@ -29,14 +35,15 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: LoginScreen(), // Start with login screen
+      home: const AuthWrapper(), // Start with auth wrapper
       routes: {
-        '/login': (context) => LoginScreen(),
+        '/login': (context) => screens.LoginScreen(),
         '/create-account': (context) => CreateAccountScreen(),
         '/dashboard': (context) => DashboardScreen(),
         '/trip-details': (context) => TripDetailsScreen(),
         '/create-trip': (context) => CreateTripScreen(),
         '/destinations': (context) => DestinationsScreen(),
+        '/profile': (context) => ProfileScreen(),
       },
     );
   }
