@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../models/destination.dart';
+import '../widgets/destination_search.dart';
 
 class CreateTripScreen extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   DateTime? endDate;
   String? selectedTripType;
   bool _isLoading = false;
+  DestinationSuggestion? selectedDestination;
 
   final List<Map<String, dynamic>> tripTypes = [
     {'label': 'Business', 'icon': Icons.business_center, 'color': Colors.blue},
@@ -114,25 +117,14 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               // Destination
               _buildInputSection(
                 'Destination',
-                TextFormField(
-                  controller: _locationController,
-                  decoration: InputDecoration(
-                    hintText: 'Where are you going?',
-                    prefixIcon: Icon(Icons.location_on_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Color(0xFF2196F3)),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a destination';
-                    }
-                    return null;
+                DestinationSearchWidget(
+                  hintText: 'Where are you going?',
+                  initialValue: selectedDestination?.name,
+                  onDestinationSelected: (suggestion) {
+                    setState(() {
+                      selectedDestination = suggestion;
+                      _locationController.text = suggestion.fullName;
+                    });
                   },
                 ),
               ),

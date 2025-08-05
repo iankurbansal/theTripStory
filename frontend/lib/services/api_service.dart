@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/trip.dart';
+import '../models/destination.dart';
+import 'auth_service.dart';
 
 class ApiService {
-  // Use the backend service URL from nginx proxy or direct backend
-  static const String _baseUrl = 'http://localhost/api';
-  static const String _fallbackUrl = 'http://localhost:8080/api';
+  // Production backend URL - using current stable deployment
+  static const String _baseUrl = 'https://thetripstory-production.up.railway.app/api';
 
   static Future<List<Trip>> getTrips() async {
     try {
-      // Try nginx proxy first, then fallback to direct backend
+      // Make request to production backend
       final response = await _makeRequest('GET', '/trips');
       
       if (response.statusCode == 200) {
@@ -108,25 +109,52 @@ class ApiService {
     }
   }
 
-  // Helper method to make HTTP requests with fallback
+  // Search destinations using Mapbox integration
+  static Future<List<DestinationSuggestion>> searchDestinations(String query, {int limit = 5}) async {
+    try {
+      final encodedQuery = Uri.encodeComponent(query);
+      final response = await _makeRequest('GET', '/destinations/search?query=$encodedQuery&limit=$limit');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonList = json.decode(response.body);
+        return jsonList.map((json) => DestinationSuggestion.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to search destinations: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error searching destinations: $e');
+      return [];
+    }
+  }
+
+  // Helper method to make HTTP requests to production backend with auth
   static Future<http.Response> _makeRequest(
     String method,
     String endpoint, {
     String? body,
     Map<String, String>? headers,
   }) async {
-    // Try nginx proxy first
-    try {
-      final uri = Uri.parse('$_baseUrl$endpoint');
-      final response = await _sendRequest(method, uri, body: body, headers: headers);
-      return response;
-    } catch (e) {
-      print('Nginx proxy failed, trying direct backend: $e');
-      
-      // Fallback to direct backend
-      final uri = Uri.parse('$_fallbackUrl$endpoint');
-      return await _sendRequest(method, uri, body: body, headers: headers);
+    // Get Firebase ID token for authentication
+    final idToken = await AuthService.getIdToken();
+    
+    print('Making $method request to: $_baseUrl$endpoint');
+    print('ID Token present: ${idToken != null}');
+    if (idToken != null) {
+      print('Token length: ${idToken.length}');
+      print('Token starts with: ${idToken.substring(0, 20)}...');
     }
+    
+    // Prepare headers with authentication
+    final authHeaders = <String, String>{
+      'Content-Type': 'application/json',
+      if (idToken != null) 'Authorization': 'Bearer $idToken',
+      ...?headers,
+    };
+
+    print('Request headers: ${authHeaders.keys.toList()}');
+
+    final uri = Uri.parse('$_baseUrl$endpoint');
+    return await _sendRequest(method, uri, body: body, headers: authHeaders);
   }
 
   static Future<http.Response> _sendRequest(

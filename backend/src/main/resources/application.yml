@@ -1,6 +1,6 @@
 # Spring Boot Configuration for TripStory Backend
 server:
-  port: 8080
+  port: ${PORT:8080}
   servlet:
     context-path: /
 
@@ -8,27 +8,27 @@ spring:
   application:
     name: tripstory-backend
   
-  # Database Configuration (H2 for development)
+  # Database Configuration
   datasource:
-    url: jdbc:h2:mem:tripstory
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
+    url: ${DATABASE_URL:jdbc:h2:mem:tripstory}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:password}
   
   # JPA Configuration
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: ${DATABASE_PLATFORM:org.hibernate.dialect.H2Dialect}
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: ${DDL_AUTO:create-drop}
+    show-sql: ${SHOW_SQL:false}
     properties:
       hibernate:
         format_sql: true
   
-  # H2 Console (for development)
+  # H2 Console (disabled in production)
   h2:
     console:
-      enabled: true
+      enabled: ${H2_CONSOLE_ENABLED:false}
       path: /h2-console
       settings:
         web-allow-others: true
@@ -50,6 +50,7 @@ cors:
     - http://localhost:80
     - http://frontend
     - http://frontend:80
+    - https://thetripstory.com
   allowed-methods:
     - GET
     - POST
@@ -68,6 +69,10 @@ logging:
     org.hibernate.SQL: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Mapbox Configuration
+mapbox:
+  access-token: ${MAPBOX_ACCESS_TOKEN:}
 
 # Management/Actuator
 management:
