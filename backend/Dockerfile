@@ -1,7 +1,10 @@
 # Multi-stage Dockerfile for TripStory Backend (Spring Boot)
 
 # Stage 1: Build the application  
-FROM maven:3.8-openjdk-17 AS builder
+FROM openjdk:17-jdk-slim AS builder
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
