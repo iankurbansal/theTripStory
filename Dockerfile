@@ -1,5 +1,5 @@
 # Simple Dockerfile for Railway deployment
-FROM maven:3.9-openjdk-17-slim
+FROM maven:3.8-openjdk-17
 
 # Set working directory
 WORKDIR /app
