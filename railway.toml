@@ -1,9 +1,10 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "cd backend && chmod +x mvnw && ./mvnw clean package -DskipTests"
+buildCommand = "cd backend && export JAVA_HOME=/opt/java/openjdk && chmod +x mvnw && ./mvnw clean package -DskipTests"
 
 [build.env]
 NIXPACKS_JAVA_VERSION = "17"
+JAVA_HOME = "/opt/java/openjdk"
 
 [deploy]
 startCommand = "cd backend && java -jar target/*.jar"
