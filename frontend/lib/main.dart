@@ -12,6 +12,7 @@ import 'screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase with secure environment variables
   await Firebase.initializeApp(options: FirebaseConfig.web);
   runApp(MyApp());
 }
