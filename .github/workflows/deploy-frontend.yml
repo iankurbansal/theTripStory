@@ -44,9 +44,13 @@ jobs:
                           --dart-define=FIREBASE_APP_ID="$FIREBASE_APP_ID" \
                           --dart-define=FIREBASE_MEASUREMENT_ID="$FIREBASE_MEASUREMENT_ID"
     
+    - name: Add .nojekyll file
+      run: touch frontend/build/web/.nojekyll
+    
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: frontend/build/web
         publish_branch: gh-pages
+        enable_jekyll: false
