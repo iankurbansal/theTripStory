@@ -25,7 +25,7 @@ steps:
       - '--min-instances=0'
       - '--concurrency=80'
       - '--timeout=300'
-      - '--set-env-vars=SPRING_PROFILES_ACTIVE=prod,DATABASE_URL=jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres,DATABASE_USERNAME=postgres.kgqbmpzrwfqpbfgaqvlr,DATABASE_PASSWORD=6SN1PjF2QeKKNn6B'
+      - '--set-env-vars=SPRING_PROFILES_ACTIVE=prod,DATABASE_URL=$$DATABASE_URL,DATABASE_USERNAME=$$DATABASE_USERNAME,DATABASE_PASSWORD=$$DATABASE_PASSWORD'
 
 # Specify the images to retain
 images:
