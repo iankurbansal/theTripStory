@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * Trip
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-07T23:53:25.043508+01:00[Europe/Dublin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-08T00:00:43.272282+01:00[Europe/Dublin]")
 public class Trip {
 
   private Long id;

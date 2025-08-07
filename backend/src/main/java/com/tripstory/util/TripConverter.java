@@ -1,6 +1,7 @@
 package com.tripstory.util;
 
 import com.tripstory.entity.Trip;
+import com.tripstory.entity.Destination;
 import com.tripstory.model.CreateTripRequest;
 import com.tripstory.model.UpdateTripRequest;
 import org.springframework.stereotype.Component;
@@ -46,7 +47,49 @@ public class TripConverter {
         entity.setEndDate(request.getEndDate());
         entity.setNotes(request.getNotes());
         
+        // For now, we'll create a basic destination from the title for Unsplash integration
+        // This is a temporary solution until we have proper destination management
+        if (request.getTitle() != null && !request.getTitle().trim().isEmpty()) {
+            Destination destination = new Destination();
+            destination.setName(extractDestinationFromTitle(request.getTitle()));
+            destination.setOrderIndex(0);
+            entity.addDestination(destination);
+        }
+        
         return entity;
+    }
+    
+    private String extractDestinationFromTitle(String title) {
+        // Simple extraction logic - look for common patterns
+        // "Trip to Paris" -> "Paris"
+        // "Paris Adventure" -> "Paris"
+        // "Summer in Tokyo" -> "Tokyo"
+        String cleaned = title.toLowerCase();
+        
+        if (cleaned.contains(" to ")) {
+            String[] parts = title.split("(?i) to ");
+            if (parts.length > 1) {
+                return parts[1].trim();
+            }
+        }
+        
+        if (cleaned.contains(" in ")) {
+            String[] parts = title.split("(?i) in ");
+            if (parts.length > 1) {
+                return parts[1].trim();
+            }
+        }
+        
+        // Fallback: use the first word that might be a place name
+        String[] words = title.split("\\s+");
+        for (String word : words) {
+            if (word.length() > 2 && Character.isUpperCase(word.charAt(0))) {
+                return word;
+            }
+        }
+        
+        // Last fallback: use the title itself
+        return title;
     }
     
     public void updateEntityFromRequest(Trip entity, UpdateTripRequest request) {

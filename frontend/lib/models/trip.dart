@@ -9,6 +9,8 @@ class Trip {
   final List<Destination> destinations;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? imageUrl;
+  final String? imageAttribution;
 
   Trip({
     this.id,
@@ -19,6 +21,8 @@ class Trip {
     this.destinations = const [],
     this.createdAt,
     this.updatedAt,
+    this.imageUrl,
+    this.imageAttribution,
   });
 
   factory Trip.fromJson(Map<String, dynamic> json) {
@@ -42,6 +46,8 @@ class Trip {
       updatedAt: json['updatedAt'] != null 
           ? DateTime.parse(json['updatedAt']) 
           : null,
+      imageUrl: json['imageUrl'],
+      imageAttribution: json['imageAttribution'],
     );
   }
 
@@ -55,6 +61,8 @@ class Trip {
       'destinations': destinations.map((destination) => destination.toJson()).toList(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'imageUrl': imageUrl,
+      'imageAttribution': imageAttribution,
     };
   }
 

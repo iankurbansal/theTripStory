@@ -35,10 +35,10 @@ class ApiService {
     try {
       final body = json.encode({
         'title': title,
-        'description': description,
-        'destination': destination,
+        'notes': description, // Backend expects 'notes', not 'description'
         'startDate': startDate,
         'endDate': endDate,
+        // Note: destinations are handled separately in the backend now
       });
 
       final response = await _makeRequest(

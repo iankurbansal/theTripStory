@@ -284,7 +284,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       location: trip.destination ?? 'Location TBD',
       dates: trip.formattedDates,
       collaborators: null,
-      imagePath: 'assets/images/placeholder.jpg',
+      imageUrl: trip.imageUrl,
+      imageAttribution: trip.imageAttribution,
       fallbackColor: color,
       fallbackIcon: icon,
       onTap: () => _navigateToTripDetails(trip),
@@ -298,7 +299,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required String location,
     required String dates,
     String? collaborators,
-    required String imagePath,
+    String? imageUrl,
+    String? imageAttribution,
     required Color fallbackColor,
     required IconData fallbackIcon,
     required VoidCallback onTap,
@@ -386,25 +388,78 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 borderRadius: BorderRadius.circular(12),
                 color: fallbackColor,
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: fallbackColor,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: imageUrl != null
+                        ? Image.network(
+                            imageUrl,
+                            width: 120,
+                            height: 80,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: fallbackColor,
+                                ),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: fallbackColor,
+                                ),
+                                child: Icon(
+                                  fallbackIcon,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
+                              );
+                            },
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: fallbackColor,
+                            ),
+                            child: Icon(
+                              fallbackIcon,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ),
+                  ),
+                  if (imageAttribution != null)
+                    Positioned(
+                      bottom: 2,
+                      right: 2,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'Unsplash',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                       ),
-                      child: Icon(
-                        fallbackIcon,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    );
-                  },
-                ),
+                    ),
+                ],
               ),
             ),
           ],
