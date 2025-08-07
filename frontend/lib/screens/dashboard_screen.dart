@@ -441,20 +441,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   if (imageAttribution != null)
                     Positioned(
-                      bottom: 2,
-                      right: 2,
+                      bottom: 1,
+                      right: 1,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(2),
                         ),
                         child: Text(
-                          'Unsplash',
+                          'U',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 6,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
