@@ -74,6 +74,11 @@ logging:
 mapbox:
   access-token: ${MAPBOX_ACCESS_TOKEN:}
 
+# Unsplash API Configuration
+unsplash:
+  api:
+    access-key: ${UNSPLASH_ACCESS_KEY:demo}
+
 # Management/Actuator
 management:
   endpoints:

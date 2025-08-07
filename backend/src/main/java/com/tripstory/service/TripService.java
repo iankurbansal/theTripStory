@@ -26,10 +26,12 @@ public class TripService {
     private static final Logger logger = LoggerFactory.getLogger(TripService.class);
 
     private final TripRepository tripRepository;
+    private final UnsplashService unsplashService;
 
     @Autowired
-    public TripService(TripRepository tripRepository) {
+    public TripService(TripRepository tripRepository, UnsplashService unsplashService) {
         this.tripRepository = tripRepository;
+        this.unsplashService = unsplashService;
     }
 
     /**
@@ -77,6 +79,18 @@ public class TripService {
         if (trip.getTitle() != null && tripRepository.existsByTitleIgnoreCase(trip.getTitle())) {
             logger.warn("Trip with title '{}' already exists", trip.getTitle());
             throw new IllegalArgumentException("Trip with title '" + trip.getTitle() + "' already exists");
+        }
+        
+        // Fetch image from Unsplash if destinations exist
+        if (!trip.getDestinations().isEmpty()) {
+            String firstDestination = trip.getDestinations().get(0).getName();
+            UnsplashService.UnsplashPhoto photo = unsplashService.fetchPhotoForDestination(firstDestination);
+            
+            if (photo != null && photo.urls != null && photo.user != null) {
+                trip.setImageUrl(photo.urls.regular);
+                trip.setImageAttribution("Photo by " + photo.user.name + " on Unsplash");
+                logger.info("Added Unsplash image for trip: {}", trip.getTitle());
+            }
         }
         
         Trip savedTrip = tripRepository.save(trip);

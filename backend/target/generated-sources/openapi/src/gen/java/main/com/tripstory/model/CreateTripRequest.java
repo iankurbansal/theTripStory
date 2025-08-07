@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * CreateTripRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-06T00:09:12.897247+01:00[Europe/Dublin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-07T23:30:36.080760+01:00[Europe/Dublin]")
 public class CreateTripRequest {
 
   private String title;

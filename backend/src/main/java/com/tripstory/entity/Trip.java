@@ -46,6 +46,12 @@ public class Trip {
     @Column(length = 1000)
     private String notes;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
+    @Column(name = "image_attribution", length = 255)
+    private String imageAttribution;
+
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("orderIndex ASC")
     private List<Destination> destinations = new ArrayList<>();
@@ -111,6 +117,22 @@ public class Trip {
         this.notes = notes;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageAttribution() {
+        return imageAttribution;
+    }
+
+    public void setImageAttribution(String imageAttribution) {
+        this.imageAttribution = imageAttribution;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -169,6 +191,12 @@ public class Trip {
         }
         if (other.getNotes() != null) {
             this.notes = other.getNotes();
+        }
+        if (other.getImageUrl() != null) {
+            this.imageUrl = other.getImageUrl();
+        }
+        if (other.getImageAttribution() != null) {
+            this.imageAttribution = other.getImageAttribution();
         }
     }
 
