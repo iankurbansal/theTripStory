@@ -222,6 +222,16 @@ components:
           description: Timestamp when the trip was last updated
           example: "2024-01-15T10:30:00Z"
           readOnly: true
+        imageUrl:
+          type: string
+          description: URL of the trip image from Unsplash
+          example: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a"
+          maxLength: 500
+        imageAttribution:
+          type: string
+          description: Attribution for the image (photographer and source)
+          example: "Photo by John Doe on Unsplash"
+          maxLength: 255
 
     CreateTripRequest:
       type: object

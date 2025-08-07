@@ -1,7 +1,9 @@
 package com.tripstory.controller;
 
-import com.tripstory.entity.Trip;
+import com.tripstory.model.CreateTripRequest;
+import com.tripstory.model.UpdateTripRequest;
 import com.tripstory.service.TripService;
+import com.tripstory.util.TripConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * REST Controller for Trip management
@@ -34,24 +37,29 @@ public class TripController {
     private static final Logger logger = LoggerFactory.getLogger(TripController.class);
 
     private final TripService tripService;
+    private final TripConverter tripConverter;
 
     @Autowired
-    public TripController(TripService tripService) {
+    public TripController(TripService tripService, TripConverter tripConverter) {
         this.tripService = tripService;
+        this.tripConverter = tripConverter;
     }
 
     @Operation(summary = "Get all trips", description = "Retrieve a list of all trips")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved trips",
                 content = @Content(mediaType = "application/json", 
-                schema = @Schema(implementation = Trip.class))),
+                schema = @Schema(implementation = com.tripstory.model.Trip.class))),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping
-    public ResponseEntity<List<Trip>> getAllTrips() {
+    public ResponseEntity<List<com.tripstory.model.Trip>> getAllTrips() {
         logger.info("GET /api/trips - Fetching all trips");
         
-        List<Trip> trips = tripService.getAllTrips();
+        List<com.tripstory.entity.Trip> tripEntities = tripService.getAllTrips();
+        List<com.tripstory.model.Trip> trips = tripEntities.stream()
+            .map(tripConverter::toModel)
+            .collect(Collectors.toList());
         logger.info("Successfully retrieved {} trips", trips.size());
         
         return ResponseEntity.ok(trips);
@@ -61,18 +69,19 @@ public class TripController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Trip found",
                 content = @Content(mediaType = "application/json", 
-                schema = @Schema(implementation = Trip.class))),
+                schema = @Schema(implementation = com.tripstory.model.Trip.class))),
         @ApiResponse(responseCode = "404", description = "Trip not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{tripId}")
-    public ResponseEntity<Trip> getTripById(
+    public ResponseEntity<com.tripstory.model.Trip> getTripById(
             @Parameter(description = "ID of the trip to retrieve", required = true)
             @PathVariable Long tripId) {
         
         logger.info("GET /api/trips/{} - Fetching trip by ID", tripId);
         
-        Trip trip = tripService.getTripById(tripId);
+        com.tripstory.entity.Trip tripEntity = tripService.getTripById(tripId);
+        com.tripstory.model.Trip trip = tripConverter.toModel(tripEntity);
         logger.info("Successfully retrieved trip: {}", trip.getTitle());
         
         return ResponseEntity.ok(trip);
@@ -82,18 +91,20 @@ public class TripController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Trip created successfully",
                 content = @Content(mediaType = "application/json", 
-                schema = @Schema(implementation = Trip.class))),
+                schema = @Schema(implementation = com.tripstory.model.Trip.class))),
         @ApiResponse(responseCode = "400", description = "Bad request - invalid input"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping
-    public ResponseEntity<Trip> createTrip(
+    public ResponseEntity<com.tripstory.model.Trip> createTrip(
             @Parameter(description = "Trip data to create", required = true)
-            @Valid @RequestBody Trip trip) {
+            @Valid @RequestBody CreateTripRequest createRequest) {
         
-        logger.info("POST /api/trips - Creating new trip: {}", trip.getTitle());
+        logger.info("POST /api/trips - Creating new trip: {}", createRequest.getTitle());
         
-        Trip createdTrip = tripService.createTrip(trip);
+        com.tripstory.entity.Trip tripEntity = tripConverter.fromCreateRequest(createRequest);
+        com.tripstory.entity.Trip createdEntity = tripService.createTrip(tripEntity);
+        com.tripstory.model.Trip createdTrip = tripConverter.toModel(createdEntity);
         logger.info("Successfully created trip with ID: {}", createdTrip.getId());
         
         return new ResponseEntity<>(createdTrip, HttpStatus.CREATED);
@@ -103,21 +114,24 @@ public class TripController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Trip updated successfully",
                 content = @Content(mediaType = "application/json", 
-                schema = @Schema(implementation = Trip.class))),
+                schema = @Schema(implementation = com.tripstory.model.Trip.class))),
         @ApiResponse(responseCode = "400", description = "Bad request - invalid input"),
         @ApiResponse(responseCode = "404", description = "Trip not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PutMapping("/{tripId}")
-    public ResponseEntity<Trip> updateTrip(
+    public ResponseEntity<com.tripstory.model.Trip> updateTrip(
             @Parameter(description = "ID of the trip to update", required = true)
             @PathVariable Long tripId,
             @Parameter(description = "Updated trip data", required = true)
-            @Valid @RequestBody Trip trip) {
+            @Valid @RequestBody UpdateTripRequest updateRequest) {
         
         logger.info("PUT /api/trips/{} - Updating trip", tripId);
         
-        Trip updatedTrip = tripService.updateTrip(tripId, trip);
+        com.tripstory.entity.Trip existingEntity = tripService.getTripById(tripId);
+        tripConverter.updateEntityFromRequest(existingEntity, updateRequest);
+        com.tripstory.entity.Trip updatedEntity = tripService.updateTrip(tripId, existingEntity);
+        com.tripstory.model.Trip updatedTrip = tripConverter.toModel(updatedEntity);
         logger.info("Successfully updated trip: {}", updatedTrip.getTitle());
         
         return ResponseEntity.ok(updatedTrip);
@@ -146,17 +160,20 @@ public class TripController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Search completed successfully",
                 content = @Content(mediaType = "application/json", 
-                schema = @Schema(implementation = Trip.class))),
+                schema = @Schema(implementation = com.tripstory.model.Trip.class))),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/search")
-    public ResponseEntity<List<Trip>> searchTrips(
+    public ResponseEntity<List<com.tripstory.model.Trip>> searchTrips(
             @Parameter(description = "Search term for trip title")
             @RequestParam String q) {
         
         logger.info("GET /api/trips/search?q={} - Searching trips", q);
         
-        List<Trip> trips = tripService.searchTripsByTitle(q);
+        List<com.tripstory.entity.Trip> tripEntities = tripService.searchTripsByTitle(q);
+        List<com.tripstory.model.Trip> trips = tripEntities.stream()
+            .map(tripConverter::toModel)
+            .collect(Collectors.toList());
         logger.info("Found {} trips matching search term: {}", trips.size(), q);
         
         return ResponseEntity.ok(trips);
@@ -164,10 +181,13 @@ public class TripController {
 
     @Operation(summary = "Get upcoming trips", description = "Retrieve all upcoming trips")
     @GetMapping("/upcoming")
-    public ResponseEntity<List<Trip>> getUpcomingTrips() {
+    public ResponseEntity<List<com.tripstory.model.Trip>> getUpcomingTrips() {
         logger.info("GET /api/trips/upcoming - Fetching upcoming trips");
         
-        List<Trip> trips = tripService.getUpcomingTrips();
+        List<com.tripstory.entity.Trip> tripEntities = tripService.getUpcomingTrips();
+        List<com.tripstory.model.Trip> trips = tripEntities.stream()
+            .map(tripConverter::toModel)
+            .collect(Collectors.toList());
         logger.info("Found {} upcoming trips", trips.size());
         
         return ResponseEntity.ok(trips);
@@ -175,10 +195,13 @@ public class TripController {
 
     @Operation(summary = "Get past trips", description = "Retrieve all past trips")
     @GetMapping("/past")
-    public ResponseEntity<List<Trip>> getPastTrips() {
+    public ResponseEntity<List<com.tripstory.model.Trip>> getPastTrips() {
         logger.info("GET /api/trips/past - Fetching past trips");
         
-        List<Trip> trips = tripService.getPastTrips();
+        List<com.tripstory.entity.Trip> tripEntities = tripService.getPastTrips();
+        List<com.tripstory.model.Trip> trips = tripEntities.stream()
+            .map(tripConverter::toModel)
+            .collect(Collectors.toList());
         logger.info("Found {} past trips", trips.size());
         
         return ResponseEntity.ok(trips);
@@ -186,10 +209,13 @@ public class TripController {
 
     @Operation(summary = "Get ongoing trips", description = "Retrieve all ongoing trips")
     @GetMapping("/ongoing")
-    public ResponseEntity<List<Trip>> getOngoingTrips() {
+    public ResponseEntity<List<com.tripstory.model.Trip>> getOngoingTrips() {
         logger.info("GET /api/trips/ongoing - Fetching ongoing trips");
         
-        List<Trip> trips = tripService.getOngoingTrips();
+        List<com.tripstory.entity.Trip> tripEntities = tripService.getOngoingTrips();
+        List<com.tripstory.model.Trip> trips = tripEntities.stream()
+            .map(tripConverter::toModel)
+            .collect(Collectors.toList());
         logger.info("Found {} ongoing trips", trips.size());
         
         return ResponseEntity.ok(trips);

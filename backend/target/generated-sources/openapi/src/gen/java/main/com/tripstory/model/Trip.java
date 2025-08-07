@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * Trip
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-07T23:30:36.080760+01:00[Europe/Dublin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-08-07T23:53:25.043508+01:00[Europe/Dublin]")
 public class Trip {
 
   private Long id;
@@ -41,6 +41,10 @@ public class Trip {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime updatedAt;
+
+  private String imageUrl;
+
+  private String imageAttribution;
 
   public Trip() {
     super();
@@ -196,6 +200,46 @@ public class Trip {
     this.updatedAt = updatedAt;
   }
 
+  public Trip imageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+    return this;
+  }
+
+  /**
+   * URL of the trip image from Unsplash
+   * @return imageUrl
+  */
+  @Size(max = 500) 
+  @Schema(name = "imageUrl", example = "https://images.unsplash.com/photo-1499856871958-5b9627545d1a", description = "URL of the trip image from Unsplash", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("imageUrl")
+  public String getImageUrl() {
+    return imageUrl;
+  }
+
+  public void setImageUrl(String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
+
+  public Trip imageAttribution(String imageAttribution) {
+    this.imageAttribution = imageAttribution;
+    return this;
+  }
+
+  /**
+   * Attribution for the image (photographer and source)
+   * @return imageAttribution
+  */
+  @Size(max = 255) 
+  @Schema(name = "imageAttribution", example = "Photo by John Doe on Unsplash", description = "Attribution for the image (photographer and source)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("imageAttribution")
+  public String getImageAttribution() {
+    return imageAttribution;
+  }
+
+  public void setImageAttribution(String imageAttribution) {
+    this.imageAttribution = imageAttribution;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -211,12 +255,14 @@ public class Trip {
         Objects.equals(this.endDate, trip.endDate) &&
         Objects.equals(this.notes, trip.notes) &&
         Objects.equals(this.createdAt, trip.createdAt) &&
-        Objects.equals(this.updatedAt, trip.updatedAt);
+        Objects.equals(this.updatedAt, trip.updatedAt) &&
+        Objects.equals(this.imageUrl, trip.imageUrl) &&
+        Objects.equals(this.imageAttribution, trip.imageAttribution);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, startDate, endDate, notes, createdAt, updatedAt);
+    return Objects.hash(id, title, startDate, endDate, notes, createdAt, updatedAt, imageUrl, imageAttribution);
   }
 
   @Override
@@ -230,6 +276,8 @@ public class Trip {
     sb.append("    notes: ").append(toIndentedString(notes)).append("\n");
     sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    updatedAt: ").append(toIndentedString(updatedAt)).append("\n");
+    sb.append("    imageUrl: ").append(toIndentedString(imageUrl)).append("\n");
+    sb.append("    imageAttribution: ").append(toIndentedString(imageAttribution)).append("\n");
     sb.append("}");
     return sb.toString();
   }
