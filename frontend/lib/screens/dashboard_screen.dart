@@ -439,26 +439,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                   ),
-                  if (imageAttribution != null)
-                    Positioned(
-                      bottom: 1,
-                      right: 1,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                        child: Text(
-                          'U',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 6,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),

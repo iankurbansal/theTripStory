@@ -130,7 +130,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             SizedBox(height: 32),
             
             // Photo Gallery Section
-            _buildPhotoGallerySection(),
+            _buildPhotoGallerySection(trip),
             
             SizedBox(height: 100), // Extra space for bottom nav
           ],
@@ -359,7 +359,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     );
   }
 
-  Widget _buildPhotoGallerySection() {
+  Widget _buildPhotoGallerySection(Trip trip) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -374,6 +374,51 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             ),
           ),
           SizedBox(height: 16),
+          
+          // Show Unsplash image if available
+          if (trip.imageUrl != null) ...[
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey.shade200,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  trip.imageUrl!,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(child: CircularProgressIndicator());
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.shade200,
+                      child: Center(
+                        child: Icon(Icons.image_not_supported, 
+                                   size: 50, 
+                                   color: Colors.grey.shade400),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            if (trip.imageAttribution != null) ...[
+              SizedBox(height: 8),
+              Text(
+                trip.imageAttribution!,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+            SizedBox(height: 24),
+          ],
           
           // Photo grid
           Row(
