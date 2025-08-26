@@ -32,6 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/health", "/swagger-ui/**", "/api-docs/**").permitAll()
                 .requestMatchers("/api/trips/test").permitAll() // Allow test endpoint for debugging
+                .requestMatchers("/api/destinations/search").permitAll() // Allow destination search without auth
                 .requestMatchers("/api/**").authenticated() // Require authentication for API endpoints
                 .anyRequest().permitAll()
             )
