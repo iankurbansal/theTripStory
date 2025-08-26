@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'firebase_config.dart';
+import 'config/environment.dart';
 import 'screens/auth_wrapper.dart';
 import 'screens/login_screen.dart' as screens;
 import 'screens/create_account_screen.dart';
@@ -12,6 +14,13 @@ import 'screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Print environment configuration for debugging
+  Environment.printConfiguration();
+  
+  // Note: Mapbox token will be set dynamically in the map widget
+  // to avoid web compatibility issues with MapboxOptions.setAccessToken()
+  
   // Initialize Firebase with secure environment variables
   await Firebase.initializeApp(options: FirebaseConfig.web);
   runApp(MyApp());

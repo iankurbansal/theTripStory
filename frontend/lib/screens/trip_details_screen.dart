@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/trip.dart';
+import '../widgets/trip_map.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   @override
@@ -62,8 +63,20 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Map Section
-            _buildMapSection(trip),
+            // Interactive Map Section
+            TripMapWidget(
+              trip: trip,
+              onDestinationAdded: (destination) {
+                print('🗺️ Destination added: ${destination.name}');
+                // Here you can save the destination to the trip
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Added ${destination.name} to trip!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+            ),
             
             // Trip Info Section
             Padding(
@@ -140,155 +153,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     );
   }
 
-  Widget _buildMapSection(Trip trip) {
-    return GestureDetector(
-      onTap: () {
-        print('🗺️ Navigating to destinations/places to visit');
-        Navigator.pushNamed(context, '/destinations', arguments: trip.title);
-      },
-      child: Container(
-        height: 200,
-        margin: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.blue.shade50,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
-            children: [
-              // Map background
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Color(0xFFE8F4F8), // Light blue-gray map color
-              ),
-              
-              // Paris landmarks with pins
-              Positioned(
-                top: 40,
-                left: 60,
-                child: _buildMapPin('Arc de Triomphe', Colors.purple),
-              ),
-              Positioned(
-                top: 80,
-                left: 140,
-                child: _buildMapPin('Palais Garnier', Colors.purple),
-              ),
-              Positioned(
-                bottom: 80,
-                left: 90,
-                child: _buildMapPin('Tour Eiffel', Colors.purple),
-              ),
-              Positioned(
-                top: 60,
-                right: 80,
-                child: _buildMapPin('Place de la Bastille', Colors.purple),
-              ),
-              Positioned(
-                bottom: 60,
-                right: 60,
-                child: _buildMapPin('Parc de Belleville', Colors.green),
-              ),
-              Positioned(
-                top: 100,
-                left: 180,
-                child: _buildMapPin('Musée d\'Orsay', Colors.purple),
-              ),
-              
-              // Paris label
-              Positioned(
-                top: 16,
-                left: 16,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    trip.destination ?? 'Destination',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              
-              // Map roads/paths (simplified)
-              CustomPaint(
-                size: Size(double.infinity, double.infinity),
-                painter: MapRoadsPainter(),
-              ),
-              
-              // Click indicator overlay
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.02),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue.withOpacity(0.3)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.touch_app, size: 14, color: Colors.blue),
-                          SizedBox(width: 4),
-                          Text(
-                            'Tap to explore',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMapPin(String label, Color color) {
-    return Container(
-      width: 12,
-      height: 12,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 2,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildPackingListSection() {
     return Padding(
@@ -639,32 +503,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   }
 }
 
-// Custom painter for map roads
-class MapRoadsPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    // Draw some curved roads
-    Path road1 = Path();
-    road1.moveTo(0, size.height * 0.7);
-    road1.quadraticBezierTo(size.width * 0.3, size.height * 0.5, size.width * 0.6, size.height * 0.6);
-    road1.quadraticBezierTo(size.width * 0.8, size.height * 0.7, size.width, size.height * 0.5);
-    canvas.drawPath(road1, paint);
-
-    Path road2 = Path();
-    road2.moveTo(size.width * 0.2, 0);
-    road2.quadraticBezierTo(size.width * 0.4, size.height * 0.3, size.width * 0.7, size.height * 0.4);
-    road2.quadraticBezierTo(size.width * 0.9, size.height * 0.5, size.width, size.height * 0.8);
-    canvas.drawPath(road2, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
 
 // Custom painter for Eiffel Tower
 class EiffelTowerPainter extends CustomPainter {
