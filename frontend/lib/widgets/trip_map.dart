@@ -175,6 +175,82 @@ class _TripMapWidgetState extends State<TripMapWidget> {
     }
   }
 
+  Widget _buildStaticMapFallback() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF87CEEB),
+            Color(0xFF4682B4),
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Destination pins representation
+          if (tripDestinations.isNotEmpty)
+            ...tripDestinations.asMap().entries.map((entry) {
+              int index = entry.key;
+              var destination = entry.value;
+              return Positioned(
+                left: 50.0 + (index * 30.0) % 100,
+                top: 60.0 + (index * 25.0) % 80,
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  child: Icon(
+                    Icons.location_on,
+                    color: Colors.white,
+                    size: 14,
+                  ),
+                ),
+              );
+            }).toList(),
+          
+          // Center message
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.map,
+                  size: 48,
+                  color: Colors.white.withOpacity(0.8),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Static Map View',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (tripDestinations.isNotEmpty)
+                  Text(
+                    '${tripDestinations.length} destination${tripDestinations.length == 1 ? '' : 's'}',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 12,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showAddDestinationDialog(double lat, double lng) {
     showDialog(
       context: context,
@@ -291,11 +367,8 @@ class _TripMapWidgetState extends State<TripMapWidget> {
         borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            MapWidget(
-              key: ValueKey("mapWidget"),
-              onMapCreated: _onMapCreated,
-              onTapListener: _onMapTap,
-            ),
+            // Create a static map fallback instead of interactive MapWidget
+            _buildStaticMapFallback(),
             
             // Trip title overlay
             Positioned(
@@ -340,7 +413,7 @@ class _TripMapWidgetState extends State<TripMapWidget> {
                 ),
               ),
               
-            // Tap instruction overlay
+            // Map info overlay
             Positioned(
               bottom: 16,
               left: 16,
@@ -356,12 +429,12 @@ class _TripMapWidgetState extends State<TripMapWidget> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.touch_app, size: 16, color: Colors.blue),
+                    Icon(Icons.info_outline, size: 16, color: Colors.blue),
                     SizedBox(width: 8),
                     Text(
-                      'Tap map to add destinations',
+                      'Interactive map requires valid Mapbox token',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         color: Colors.blue,
                         fontWeight: FontWeight.w500,
                       ),
